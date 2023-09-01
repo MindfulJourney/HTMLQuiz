@@ -1,0 +1,118 @@
+const startButton = document.getElementById('start-btn')
+const nextButton = document.getElementById('next-btn')
+
+const questionContainerElement = document.getElementById('question-container')
+const questionElement = document.getElementById('question')
+const answerButtonElement = document.getElementById('answer-buttons')
+
+let shufledQuestions, correctQuesitonIndex;
+let quizScore = 0;
+
+
+
+startButton.addEventListener('click', startGame)
+
+nextButton.addEventListener('click', () => {
+    correctQuesitonIndex++
+    setNextQuestion()
+})
+
+function startGame(){
+    startButton.classList.add('hide')
+    shufledQuestions=questions.sort(() =>Math.random() -0.5)
+    correctQuesitonIndex = 0;
+    questionContainerElement.classList.remove('hide')
+    setNextQuestion()
+    quizScore = 0
+}
+
+function setNextQuestion(){
+    resetState();
+    showQuestion(shufledQuestions[correctQuesitonIndex])
+}
+
+function showQuestion(question){
+    questionElement.innerText = question.question;
+    question.answers.forEach((answer) => {
+        const button = document.createElement('button')
+        button.innerText = answer.text;
+        button.classList.add('btn')
+        if (answer.correct){
+            button.dataset.correct = answer.correct
+        }
+        button.addEventListener('click', selectAnswer)
+        answerButtonElement.appendChild(button)
+    })
+}
+
+
+function resetState(){
+    clearStatusclass(document.body)
+    nextButton.classList.add('hide')
+    while(answerButtonElement.firstChild){
+        answerButtonElement.removeChild(answerButtonElement.firstChild)
+    }
+}
+
+function selectAnswer(e){
+    const selectButton =e.target
+    const correct =selectButton.dataset.correct
+
+    setStatusClass(document.body,correct)
+    Array.from(answerButtonElement.children).forEach((button)=>{
+        setStatusClass(button, button.dataset.correct)
+    })
+    if(shufledQuestions.length > correctQuesitonIndex + 1){
+        nextButton.classList.remove("hide")
+    }else {
+        startButton.innerText ="restart"
+        startButton.classList.remove("hide")
+    }
+    if(selectButton.dataset = correct){               // selectedButton
+        quizScore++
+    }
+    
+}
+
+function setStatusClass(element, correct){
+    clearStatusclass(element)
+    if(correct){
+        element.classList.add("correct")
+    }else {
+        element.classList.add("wrong");
+    }
+}
+
+function clearStatusclass(Element){
+    element.classList.remove('correct')
+    element.classList.remove('wrong')
+}
+const questions = [
+    {
+        question: "Which one of these is a JavaScript framework?",
+        answers : [
+            {text: 'Python', correct: false},
+            {text: 'Django', correct: false},
+            {text: 'React', correct: true},
+            {text: 'Eclipse', correct: false},
+        ],
+    },
+    {
+        question: "Who is the current president of the Philippines?",
+        answers : [
+            {text: 'Marcos', correct: false},
+            {text: 'Duterte', correct: false},
+            {text: 'Robredo', correct: true},
+            {text: 'Sotto', correct: false},
+        ],
+    },
+    {
+        question: "What is 4x3=?",
+        answers : [
+            {text: '34', correct: false},
+            {text: '32', correct: false},
+            {text: '12', correct: true},
+            {text: '9', correct: false},
+        ],
+    },
+]
